@@ -5,7 +5,10 @@ import os
 from subprocess import Popen, PIPE
 import argparse
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../../deps/readies"))
+HERE = os.path.abspath(os.path.dirname(__file__))
+ROOT = os.path.abspath(os.path.join(HERE, "../../.."))
+READIES = os.path.join(ROOT, "deps/readies")
+sys.path.insert(0, READIES)
 import paella
 
 #----------------------------------------------------------------------------------------------
@@ -36,11 +39,6 @@ class RedisGraphSetup(paella.Setup):
         self.install("python-psutil")
 
     def macosx(self):
-        p = Popen('xcode-select -p', stdout=PIPE, close_fds=True, shell=True)
-        out, _ = p.communicate()
-        if out.splitlines() == []:
-            fatal("Xcode tools are not installed. Please run xcode-select --install.")
-
         self.install_gnu_utils()
         self.install("redis")
 

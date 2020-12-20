@@ -1,12 +1,7 @@
 version: 2.1
 
-jobs:
-  build:
-    docker:
-      - image: debian:buster
-    parameters:
-      platform:
-        type: string
+commands:
+  setup-executor:
     steps:
       - run:
           name: Setup executor
@@ -14,18 +9,33 @@ jobs:
             apt-get -qq update
             apt-get -q install -y git openssh-client curl ca-certificates make tar gzip
             bash <(curl -fsSL https://get.docker.com)
-      - checkout
-      - setup_remote_docker
+      - setup_remote_docker:
+          docker_layer_caching: true
+
+  setup-automation:
+    steps:
       - run:
-          name: Setup
+          name: Setup automation
           command: |
             git submodule update --init --recursive
             ./deps/readies/bin/getpy2
-            # echo "$DOCKER_REDISFAB_PWD" | docker login --username redisfab --password-stdin
             docker login --username redisfab --password "$DOCKER_REDISFAB_PWD"
+
+jobs:
+  platform-builder:
+    docker:
+      - image: debian:buster
+    parameters:
+      platform:
+        type: string
+    steps:
+      - setup-executor
+      - checkout
+      - setup-automation
       - run:
           name: Build and publish
           command: |
+            cd rmbuilder
             make build X64=1 OSNICK=<<parameters.platform>>
             if [[ $CIRCLE_BRANCH == master ]]; then
                 make publish X64=1 OSNICK=<<parameters.platform>>
@@ -72,23 +82,23 @@ workflows:
   version: 2
   build_all:
     jobs:
-      - build:
+      - platform-builder:
           name: build-buster
           platform: buster
           <<: *on-any-branch
-      - build:
+      - platform-builder:
           name: build-centos7
           platform: centos7
           <<: *on-any-branch
-      - build:
+      - platform-builder:
           name: build-bionic
           platform: bionic
           <<: *on-any-branch
-      - build:
+      - platform-builder:
           name: build-xenial
           platform: xenial
           <<: *on-any-branch
-      - build:
+      - platform-builder:
           name: build-trusty
           platform: trusty
           <<: *on-any-branch
@@ -99,18 +109,18 @@ workflows:
           cron: "21 17 * * 0"
           <<: *on-master
     jobs:
-      - build:
+      - platform-builder:
           name: build-buster
           platform: buster
-      - build:
+      - platform-builder:
           name: build-centos7
           platform: centos7
-      - build:
+      - platform-builder:
           name: build-bionic
           platform: bionic
-      - build:
+      - platform-builder:
           name: build-xenial
           platform: xenial
-      - build:
+      - platform-builder:
           name: build-trusty
           platform: trusty

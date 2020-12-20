@@ -1,3 +1,3 @@
 [submodule "deps/readies"]
 	path = deps/readies
-	url = ../readies.git
+	url = https://github.com/RedisLabsModules/readies.git
