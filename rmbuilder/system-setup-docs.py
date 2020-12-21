@@ -4,7 +4,10 @@ import sys
 import os
 import argparse
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "deps/readies"))
+HERE = os.path.abspath(os.path.dirname(__file__))
+ROOT = HERE
+READIES = os.path.join(ROOT, "deps/readies")
+sys.path.insert(0, READIES)
 import paella
 
 #----------------------------------------------------------------------------------------------
@@ -16,10 +19,10 @@ class RedisModuleBuilderSetup(paella.Setup):
     #------------------------------------------------------------------------------------------
     def common_first(self):
         self.setup_pip()
-        self.pip3_install("wheel")
-        self.pip3_install("setuptools --upgrade")
+        self.pip_install("wheel")
+        self.pip_install("setuptools --upgrade")
         if self.osnick == 'centos7' or self.osnick == 'bionic':
-            self.pip3_install("mkdocs mkdocs-material mkdocs-extensions")
+            self.pip_install("mkdocs mkdocs-material mkdocs-extensions")
 
 #----------------------------------------------------------------------------------------------
 

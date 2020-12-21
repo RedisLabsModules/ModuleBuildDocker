@@ -5,7 +5,7 @@ import os
 import argparse
 
 HERE = os.path.abspath(os.path.dirname(__file__))
-ROOT = os.path.abspath(os.path.join(HERE, "../../.."))
+ROOT = os.path.abspath(os.path.join(HERE, ".."))
 READIES = os.path.join(ROOT, "deps/readies")
 sys.path.insert(0, READIES)
 import paella
@@ -81,8 +81,8 @@ class RedisAISetup(paella.Setup):
         self.pip_install("--no-cache-dir git+https://github.com/RedisLabsModules/RLTest.git@master")
         self.pip_install("--no-cache-dir git+https://github.com/RedisLabs/RAMP@master")
 
-        self.pip_install("-r %s/readies/paella/requirements.txt" % HERE)
-        self.pip_install("-r %s/tests/flow/test_requirements.txt" % ROOT)
+        # self.pip_install("-r %s/readies/paella/requirements.txt" % HERE)
+        # self.pip_install("-r %s/tests/flow/test_requirements.txt" % ROOT)
 
         self.pip_install("awscli")
         self.pip_install("mkdocs mkdocs-material mkdocs-extensions")

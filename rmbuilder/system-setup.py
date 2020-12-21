@@ -5,7 +5,7 @@ import os
 import argparse
 
 HERE = os.path.abspath(os.path.dirname(__file__))
-ROOT = os.path.abspath(os.path.join(HERE, ".."))
+ROOT = HERE
 READIES = os.path.join(ROOT, "deps/readies")
 sys.path.insert(0, READIES)
 import paella
@@ -37,10 +37,10 @@ class RedisModuleBuilderSetup(paella.Setup):
     #------------------------------------------------------------------------------------------
     def redhat_compat(self):
         self.group_install("'Development Tools'")
-        
+
         self.install("redhat-lsb-core")
         self.install("epel-release")
-        
+
         self.install("openssh-clients")
         self.install("python2-regex")
 
@@ -52,9 +52,9 @@ class RedisModuleBuilderSetup(paella.Setup):
 
     #------------------------------------------------------------------------------------------
     def linux_last(self):
-        self.run("%s/bin/getdocker" % READIES)
+        # self.run("%s/bin/getdocker" % READIES)
         self.install_git_lfs_on_linux()
-    
+
     #------------------------------------------------------------------------------------------
     def macos(self):
         self.install("redis")

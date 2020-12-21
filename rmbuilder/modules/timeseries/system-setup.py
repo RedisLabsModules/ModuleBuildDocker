@@ -5,7 +5,7 @@ import os
 import argparse
 
 HERE = os.path.abspath(os.path.dirname(__file__))
-ROOT = os.path.abspath(os.path.join(HERE, "../../.."))
+ROOT = os.path.abspath(os.path.join(HERE, ".."))
 READIES = os.path.join(ROOT, "deps/readies")
 sys.path.insert(0, READIES)
 import paella
@@ -34,8 +34,6 @@ class RedisTimeSeriesSetup(paella.Setup):
         self.group_install("'Development Tools'")
 
     def macos(self):
-        if sh('xcode-select -p') == '':
-            fatal("Xcode tools are not installed. Please run xcode-select --install.")
         self.install_gnu_utils()
         self.install("redis")
 
@@ -46,7 +44,7 @@ class RedisTimeSeriesSetup(paella.Setup):
         self.install("lcov")
         if not self.has_command("ramp"):
             self.pip_install("git+https://github.com/RedisLabs/RAMP@master")
-        self.pip_install("-r tests/requirements.txt")
+        # self.pip_install("-r tests/requirements.txt")
         self.pip_install("jinja2")
 
 #----------------------------------------------------------------------------------------------
