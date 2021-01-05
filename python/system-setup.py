@@ -5,7 +5,8 @@ import os
 import argparse
 
 ROOT = HERE = os.path.abspath(os.path.dirname(__file__))
-sys.path.insert(0, os.path.join(ROOT, "deps/readies"))
+READIES = os.path.join(ROOT, "deps/readies")
+sys.path.insert(0, READIES)
 import paella
 
 #----------------------------------------------------------------------------------------------
@@ -46,15 +47,7 @@ class Python3Setup(paella.Setup):
         self.install("zip unzip")
         self.install("libatomic file")
 
-        self.run("wget -q -O /tmp/epel-release-latest-7.noarch.rpm http://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm")
-        self.run("rpm -Uv /tmp/epel-release-latest-7.noarch.rpm --replacepkgs ")
-
-        if self.arch == 'x64':
-            self.run("""
-                dir=$(mktemp -d /tmp/tar.XXXXXX)
-                (cd $dir; wget -q -O tar.tgz http://redismodules.s3.amazonaws.com/gnu/gnu-tar-1.32-x64-centos7.tgz; tar -xzf tar.tgz -C /; )
-                rm -rf $dir
-                """)
+        self.run("%s/bin/getepel" % READIES)
 
         # uninstall and install psutil (order is important), otherwise RLTest fails
         self.run("pip uninstall -y psutil || true")
@@ -76,7 +69,7 @@ class Python3Setup(paella.Setup):
     def linux_last(self):
         pass
 
-    def macosx(self):
+    def macos(self):
         self.install("libtool autoconf automake")
         self.run("""
             dir=$(mktemp -d /tmp/gettext.XXXXXX)
@@ -90,7 +83,7 @@ class Python3Setup(paella.Setup):
             make install
             cd $base
             rm -rf $dir
-            """, output_on_error=True)
+            """)
 
         self.install("zlib openssl readline coreutils libiconv")
         self.install("binutils") # into /usr/local/opt/binutils
